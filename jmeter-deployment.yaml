@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jmeter-deployment
+  labels:
+    app: jmeter
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: jmeter
+  template:
+    metadata:
+      labels:
+        app: jmeter
+    spec:
+      containers:
+      - name: jmeter
+        image: justb4/jmeter:latest
+        ports:
+        - containerPort: 1099
+        - containerPort: 50000
+        resources:
+          limits:
+            memory: "1Gi"
+            cpu: "1"
+          requests:
+            memory: "512Mi"
+            cpu: "0.5"
+        volumeMounts:
+        - name: test-plan
+          mountPath: /test
+      volumes:
+      - name: test-plan
+        configMap:
+          name: jmeter-test-plan
